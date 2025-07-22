@@ -9,6 +9,7 @@ class App {
   cars = null
   finish_line = null
   infoUpdater = null
+  autoplay = false
 
   ready () {
     // Start loading game images.
@@ -109,6 +110,11 @@ class Controller {
       this.reset()
     })
 
+    document.querySelector('#autoplay').addEventListener('click', event => {
+      event.preventDefault()
+      autoplay = !autoplay
+    })
+
     document.getElementById('info-btn').addEventListener('click', function (e) {
       e.preventDefault() // Prevent default behavior of the anchor
 
@@ -176,6 +182,11 @@ class Controller {
 
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
+
+      if (autoplay) {
+        this.reset()
+        this.run()
+      }
     }
   }
 
@@ -446,13 +457,14 @@ class Information {
       }
 
       infoText += '<br/>'
-      infoText += `Pinguins: ${player.pickups}<br/>`
+      infoText += `Penguins: ${player.pickups}<br/>`
       infoText += `Breaks: ${player.breaks}<br/>`
       infoText += `Jumps: ${player.jumps}<br/>`
       infoText += '<br/>'
       infoText += `Missed: ${player.misses}<br/>`
       infoText += `Crashes: ${player.hits}<br/>`
       infoText += `Collisions: ${player.collisions}<br/>`
+      infoText += `Victories: ${}<br/>`
 
       infoText += '<br/><br/>'
     })
