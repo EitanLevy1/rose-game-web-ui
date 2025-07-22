@@ -9,6 +9,7 @@ class App {
   cars = null
   finish_line = null
   infoUpdater = null
+  autoplay = false
 
   ready () {
     // Start loading game images.
@@ -109,6 +110,11 @@ class Controller {
       this.reset()
     })
 
+    document.querySelector('#autoplay').addEventListener('click', event => {
+      event.preventDefault()
+      autoplay = !autoplay
+    })
+
     document.getElementById('info-btn').addEventListener('click', function (e) {
       e.preventDefault() // Prevent default behavior of the anchor
 
@@ -176,6 +182,11 @@ class Controller {
 
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
+
+      if (autoplay) {
+        this.reset()
+        this.run()
+      }
     }
   }
 
