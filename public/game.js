@@ -446,13 +446,14 @@ class Information {
       }
 
       infoText += '<br/>'
-      infoText += `Pinguins: ${player.pickups}<br/>`
+      infoText += `Penguins: ${player.pickups}<br/>`
       infoText += `Breaks: ${player.breaks}<br/>`
       infoText += `Jumps: ${player.jumps}<br/>`
       infoText += '<br/>'
       infoText += `Missed: ${player.misses}<br/>`
       infoText += `Crashes: ${player.hits}<br/>`
       infoText += `Collisions: ${player.collisions}<br/>`
+      infoText += `Victories: ${}<br/>`
 
       infoText += '<br/><br/>'
     })
