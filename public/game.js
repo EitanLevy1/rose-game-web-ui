@@ -257,7 +257,6 @@ class Controller {
           this.reset_and_run()
         }
       }
-    }
   }
 
 class Rate {
