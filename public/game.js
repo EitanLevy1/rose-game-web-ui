@@ -15,7 +15,7 @@ class App {
     document.querySelector('#left.player .name').textContent = 'Loading ...'
 
     this.controller = new Controller()
-    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0])
+    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 500])
     const imageLoader = new ImageLoader(() => {
       this.client = new Client(this.onmessage.bind(this), 2000)
 
@@ -142,6 +142,7 @@ class Controller {
 
   stop () {
     this.disable()
+    this.autoplay = false;
 
     fetch('api/admin?running=0', { method: 'POST' })
       .then(() => {
@@ -165,8 +166,6 @@ class Controller {
   }
 
   reset_and_run () {
-    this.disable()
-
     fetch('api/admin?reset=1', { method: 'POST' })
       .then(() => {
         console.log('reset')
@@ -181,16 +180,29 @@ class Controller {
     if (state.players.length === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
       document.querySelector('#stop').setAttribute('disabled', 'disabled')
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
     } else if (state.started) {
       document.querySelector('#info').textContent = ('')
       document.querySelector('#run').setAttribute('disabled', 'disabled')
       document.querySelector('#stop').removeAttribute('disabled')
       document.querySelector('#reset').setAttribute('disabled', 'disabled')
+      if (this.autoplay) {
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
+      }
+      else {
+        document.querySelector('#autoplay').removeAttribute('disabled')
+      }
     } else {
       document.querySelector('#info').textContent = ('')
       document.querySelector('#run').removeAttribute('disabled')
       document.querySelector('#stop').setAttribute('disabled', 'disabled')
       document.querySelector('#reset').removeAttribute('disabled')
+      if (this.autoplay) {
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
+      }
+      else {
+        document.querySelector('#autoplay').removeAttribute('disabled')
+      }
     }
 
     if (state.timeleft === 0) {
