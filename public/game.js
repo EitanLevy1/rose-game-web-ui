@@ -112,7 +112,7 @@ class Controller {
 
     document.querySelector('#autoplay').addEventListener('click', event => {
       event.preventDefault()
-      autoplay = !autoplay
+      this.autoplay = !this.autoplay
     })
 
     document.getElementById('info-btn').addEventListener('click', function (e) {
@@ -196,17 +196,40 @@ class Controller {
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
 
-      if (autoplay) {
-        this.reset_and_run()
+      if (this.autoplay) {
+          let currentScore = 0
+          let topPlayer = 'Unknown'
+
+          if (state.players && state.players.length > 0) {
+            // Get highest scoring player in current game
+            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
+            currentScore = best.score
+            topPlayer = best.name
+          }
+
+          // Read saved high score from localStorage
+          const savedHighScore = localStorage.getItem('highestScore')
+          const savedScorer = localStorage.getItem('highestScorer')
+          let highScore = savedHighScore ? parseInt(savedHighScore) : 0
+          let highScorer = savedScorer || 'Unknown'
+
+          // Update if new high score
+          if (currentScore > highScore) {
+            highScore = currentScore
+            highScorer = topPlayer
+            localStorage.setItem('highestScore', highScore)
+            localStorage.setItem('highestScorer', highScorer)
+          }
+
+          // Log highest score
+          console.log('Highest Score:', highScore)
+          console.log('Highest Scorer:', highScorer)
+
+          this.reset_and_run()
+        }
       }
     }
   }
-
-  disable () {
-    document.querySelector('#run').setAttribute('disabled', 'disabled')
-    document.querySelector('#stop').setAttribute('disabled', 'disabled')
-  }
-}
 
 class Rate {
   constructor (values) {
@@ -476,7 +499,7 @@ class Information {
       infoText += `Missed: ${player.misses}<br/>`
       infoText += `Crashes: ${player.hits}<br/>`
       infoText += `Collisions: ${player.collisions}<br/>`
-      infoText += `Victories: ${}<br/>`
+      infoText += `Victories: <br/>`
 
       infoText += '<br/><br/>'
     })
