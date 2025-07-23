@@ -95,38 +95,42 @@ class Controller {
   }
 
   initializeEvents () {
-    document.querySelector('#run').addEventListener('click', event => {
-      event.preventDefault()
-      this.run()
-    })
+  document.querySelector('#run').addEventListener('click', event => {
+    event.preventDefault()
+    this.run()
+  })
 
-    document.querySelector('#stop').addEventListener('click', event => {
-      event.preventDefault()
-      this.stop()
-    })
+  document.querySelector('#stop').addEventListener('click', event => {
+    event.preventDefault()
+    this.stop()
+  })
 
-    document.querySelector('#reset').addEventListener('click', event => {
-      event.preventDefault()
-      this.reset()
-    })
+  document.querySelector('#reset').addEventListener('click', event => {
+    event.preventDefault()
+    this.reset()
+  })
 
-    document.querySelector('#autoplay').addEventListener('click', event => {
-      event.preventDefault()
-      this.autoplay = !this.autoplay
-    })
+  document.querySelector('#autoplay').addEventListener('click', event => {
+    event.preventDefault()
+    this.autoplay = !this.autoplay
 
-    document.getElementById('info-btn').addEventListener('click', function (e) {
-      e.preventDefault() // Prevent default behavior of the anchor
+    if (this.autoplay) {
+      this.reset_and_run()
+    }
+  })
 
-      const infoPanel = document.getElementById('info-panel')
+  document.getElementById('info-btn').addEventListener('click', function (e) {
+    e.preventDefault()
 
-      if (infoPanel.classList.contains('hidden')) {
-        infoPanel.classList.remove('hidden')
-      } else {
-        infoPanel.classList.add('hidden')
-      }
-    })
-  }
+    const infoPanel = document.getElementById('info-panel')
+
+    if (infoPanel.classList.contains('hidden')) {
+      infoPanel.classList.remove('hidden')
+    } else {
+      infoPanel.classList.add('hidden')
+    }
+  })
+}
 
   run () {
     this.disable()
@@ -166,15 +170,19 @@ class Controller {
   }
 
   reset_and_run () {
-    fetch('api/admin?reset=1', { method: 'POST' })
-      .then(() => {
-        console.log('reset')
+  fetch('api/admin?reset=1', { method: 'POST' })
+    .then(() => {
+      console.log('reset')
+
+
+      setTimeout(() => {
         this.run()
-      })
-      .catch((e) => {
-        console.log(`Error reset: ${e.toString()}`)
-      })
-  }
+      }, 1000)
+    })
+    .catch((e) => {
+      console.log(`Error reset: ${e.toString()}`)
+    })
+}
 
   update (state) {
     if (state.players.length === 0) {
