@@ -164,6 +164,19 @@ class Controller {
       })
   }
 
+  reset_and_run () {
+    this.disable()
+
+    fetch('api/admin?reset=1', { method: 'POST' })
+      .then(() => {
+        console.log('reset')
+        this.run()
+      })
+      .catch((e) => {
+        console.log(`Error reset: ${e.toString()}`)
+      })
+  }
+
   update (state) {
     if (state.players.length === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
@@ -184,8 +197,7 @@ class Controller {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
 
       if (this.autoplay) {
-        this.reset()
-        this.run()
+        this.reset_and_run()
       }
     }
   }
