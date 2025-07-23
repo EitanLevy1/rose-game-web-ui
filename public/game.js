@@ -15,7 +15,7 @@ class App {
     document.querySelector('#left.player .name').textContent = 'Loading ...'
 
     this.controller = new Controller()
-    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 500])
+    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0, 500.0])
     const imageLoader = new ImageLoader(() => {
       this.client = new Client(this.onmessage.bind(this), 2000)
 
@@ -225,8 +225,40 @@ class Controller {
   disable () {
     document.querySelector('#run').setAttribute('disabled', 'disabled')
     document.querySelector('#stop').setAttribute('disabled', 'disabled')
+      if (this.autoplay) {
+          let currentScore = 0
+          let topPlayer = 'Unknown'
+
+          if (state.players && state.players.length > 0) {
+            // Get highest scoring player in current game
+            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
+            currentScore = best.score
+            topPlayer = best.name
+          }
+
+          // Read saved high score from localStorage
+          const savedHighScore = localStorage.getItem('highestScore')
+          const savedScorer = localStorage.getItem('highestScorer')
+          let highScore = savedHighScore ? parseInt(savedHighScore) : 0
+          let highScorer = savedScorer || 'Unknown'
+
+          // Update if new high score
+          if (currentScore > highScore) {
+            highScore = currentScore
+            highScorer = topPlayer
+            localStorage.setItem('highestScore', highScore)
+            localStorage.setItem('highestScorer', highScorer)
+          }
+
+          // Log highest score
+          console.log('Highest Score:', highScore)
+          console.log('Highest Scorer:', highScorer)
+
+          this.reset_and_run()
+        }
+      }
+    }
   }
-}
 
 class Rate {
   constructor (values) {
