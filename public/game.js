@@ -9,14 +9,13 @@ class App {
   cars = null
   finish_line = null
   infoUpdater = null
-  autoplay = false
 
   ready () {
     // Start loading game images.
     document.querySelector('#left.player .name').textContent = 'Loading ...'
 
     this.controller = new Controller()
-    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0])
+    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0, 500.0])
     const imageLoader = new ImageLoader(() => {
       this.client = new Client(this.onmessage.bind(this), 2000)
 
@@ -31,7 +30,7 @@ class App {
     this.cars = new Cars(imageLoader)
     this.finish_line = new FinishLine(imageLoader)
     this.infoUpdater = new Information()
-    this.sound = new Sound('assets/soundtrack/Nyan_Cat.ogg')
+    this.sound = new Sound('assets/soundtrack/מרוץ האש.mp3')
   }
 
   onmessage (m) {
@@ -92,6 +91,7 @@ class Client {
 class Controller {
   constructor () {
     this.initializeEvents()
+    this.autoplay = false;
   }
 
   initializeEvents () {
@@ -142,6 +142,7 @@ class Controller {
 
   stop () {
     this.disable()
+    this.autoplay = false;
 
     fetch('api/admin?running=0', { method: 'POST' })
       .then(() => {
@@ -165,8 +166,6 @@ class Controller {
   }
 
   reset_and_run () {
-    this.disable()
-
     fetch('api/admin?reset=1', { method: 'POST' })
       .then(() => {
         console.log('reset')
@@ -181,21 +180,43 @@ class Controller {
     if (state.players.length === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
       document.querySelector('#stop').setAttribute('disabled', 'disabled')
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
     } else if (state.started) {
       document.querySelector('#info').textContent = ('')
       document.querySelector('#run').setAttribute('disabled', 'disabled')
       document.querySelector('#stop').removeAttribute('disabled')
       document.querySelector('#reset').setAttribute('disabled', 'disabled')
+      if (this.autoplay) {
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
+      }
+      else {
+        document.querySelector('#autoplay').removeAttribute('disabled')
+      }
     } else {
       document.querySelector('#info').textContent = ('')
       document.querySelector('#run').removeAttribute('disabled')
       document.querySelector('#stop').setAttribute('disabled', 'disabled')
       document.querySelector('#reset').removeAttribute('disabled')
+      if (this.autoplay) {
+      document.querySelector('#autoplay').setAttribute('disabled', 'disabled')
+      }
+      else {
+        document.querySelector('#autoplay').removeAttribute('disabled')
+      }
     }
 
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
 
+      if (this.autoplay) {
+        this.reset_and_run()
+      }
+    }
+  }
+
+  disable () {
+    document.querySelector('#run').setAttribute('disabled', 'disabled')
+    document.querySelector('#stop').setAttribute('disabled', 'disabled')
       if (this.autoplay) {
           let currentScore = 0
           let topPlayer = 'Unknown'

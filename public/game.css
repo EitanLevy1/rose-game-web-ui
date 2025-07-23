@@ -1,6 +1,6 @@
 body {
     font-family: sans-serif;
-    background: #2c3e50; /* darker background */
+    background: #6b7d5a; /* darker background */
     color: #ecf0f1;     /* lighter text color for contrast */
     margin: 0;
 }
@@ -23,14 +23,14 @@ body {
     font-weight: bold;
     border: 1px solid #34495e; /* updated border color */
     color: #ecf0f1;            /* lighter text */
-    background-color: #3498db; /* blue tinted background */
+    background-color: #ff984b; /* blue tinted background */
     border-radius: 5px;        /* rounded borders for modern look */
     transition: background-color 0.2s;
 }
 
 #control button:disabled, #control button:disabled:hover {
     color: #666;
-    background-color: #2980b9; /* slightly darker for disabled state */
+    background-color: #ff8069; /* slightly darker for disabled state */
 }
 
 #control button:hover {
