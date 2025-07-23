@@ -217,6 +217,35 @@ class Controller {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
 
       if (this.autoplay) {
+        document.querySelector('#stop').removeAttribute('disabled')
+
+        let currentScore = 0
+          let topPlayer = 'Unknown'
+
+          if (state.players && state.players.length > 0) {
+            // Get highest scoring player in current game
+            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
+            currentScore = best.score
+            topPlayer = best.name
+          }
+
+          // Read saved high score from localStorage
+          const savedHighScore = localStorage.getItem('highestScore')
+          const savedScorer = localStorage.getItem('highestScorer')
+          let highScore = savedHighScore ? parseInt(savedHighScore) : 0
+          let highScorer = savedScorer || 'Unknown'
+
+          // Update if new high score
+          if (currentScore > highScore) {
+            highScore = currentScore
+            highScorer = topPlayer
+            localStorage.setItem('highestScore', highScore)
+            localStorage.setItem('highestScorer', highScorer)
+          }
+
+          // Log highest score
+          console.log('Highest Score:', highScore)
+          console.log('Highest Scorer:', highScorer)
         this.reset_and_run()
       }
     }
