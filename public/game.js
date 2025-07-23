@@ -115,6 +115,9 @@ class Controller {
     this.autoplay = !this.autoplay
 
     if (this.autoplay) {
+        localStorage.removeItem('highestScore')
+        localStorage.removeItem('highestScorer')
+        console.log('High score reset.')
       this.reset_and_run()
     }
   })
