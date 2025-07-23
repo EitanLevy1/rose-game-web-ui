@@ -9,7 +9,6 @@ class App {
   cars = null
   finish_line = null
   infoUpdater = null
-  autoplay = false
 
   ready () {
     // Start loading game images.
@@ -92,6 +91,7 @@ class Client {
 class Controller {
   constructor () {
     this.initializeEvents()
+    this.autoplay = false;
   }
 
   initializeEvents () {
@@ -112,7 +112,7 @@ class Controller {
 
     document.querySelector('#autoplay').addEventListener('click', event => {
       event.preventDefault()
-      autoplay = !autoplay
+      this.autoplay = !this.autoplay
     })
 
     document.getElementById('info-btn').addEventListener('click', function (e) {
@@ -183,7 +183,7 @@ class Controller {
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
 
-      if (autoplay) {
+      if (this.autoplay) {
         this.reset()
         this.run()
       }
@@ -464,7 +464,7 @@ class Information {
       infoText += `Missed: ${player.misses}<br/>`
       infoText += `Crashes: ${player.hits}<br/>`
       infoText += `Collisions: ${player.collisions}<br/>`
-      infoText += `Victories: ${}<br/>`
+      infoText += `Victories: <br/>`
 
       infoText += '<br/><br/>'
     })
