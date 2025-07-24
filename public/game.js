@@ -1,3 +1,7 @@
+let high_scores = [0, 0];
+let results_sums = [0, 0];
+let num_of_rounds = 0;
+
 class App {
   client = null
   controller = null
@@ -15,7 +19,7 @@ class App {
     document.querySelector('#left.player .name').textContent = 'Loading ...'
 
     this.controller = new Controller()
-    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0, 500.0])
+    this.rate = new Rate([0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 60.0, 100.0, 200.0, 300.0, 400.0, 500.0])
     const imageLoader = new ImageLoader(() => {
       this.client = new Client(this.onmessage.bind(this), 2000)
 
@@ -113,13 +117,11 @@ class Controller {
   document.querySelector('#autoplay').addEventListener('click', event => {
     event.preventDefault()
     this.autoplay = !this.autoplay
-
-    if (this.autoplay) {
-        localStorage.removeItem('highestScore')
-        localStorage.removeItem('highestScorer')
-        console.log('High score reset.')
-      this.reset_and_run()
-    }
+//    if (this.autoplay) {
+//        localStorage.removeItem('highestScore')
+//        localStorage.removeItem('highestScorer')
+//        console.log('High score reset.')
+//    }
   })
 
   document.getElementById('info-btn').addEventListener('click', function (e) {
@@ -218,37 +220,45 @@ class Controller {
 
     if (state.timeleft === 0) {
       document.querySelector('#run').setAttribute('disabled', 'disabled')
+      let player_nums = Object.keys(state.players);
+      num_of_rounds++;
+      for (const num of player_nums) {
+        const player = state.players[num];
+        results_sums[num] += player.score;
+        if (player.score >= high_scores[num]) {
+          high_scores[num] = player.score;
+        }
+      }
 
       if (this.autoplay) {
         document.querySelector('#stop').removeAttribute('disabled')
-
-        let currentScore = 0
-          let topPlayer = 'Unknown'
-
-          if (state.players && state.players.length > 0) {
-            // Get highest scoring player in current game
-            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
-            currentScore = best.score
-            topPlayer = best.name
-          }
-
-          // Read saved high score from localStorage
-          const savedHighScore = localStorage.getItem('highestScore')
-          const savedScorer = localStorage.getItem('highestScorer')
-          let highScore = savedHighScore ? parseInt(savedHighScore) : 0
-          let highScorer = savedScorer || 'Unknown'
-
-          // Update if new high score
-          if (currentScore > highScore) {
-            highScore = currentScore
-            highScorer = topPlayer
-            localStorage.setItem('highestScore', highScore)
-            localStorage.setItem('highestScorer', highScorer)
-          }
-
-          // Log highest score
-          console.log('Highest Score:', highScore)
-          console.log('Highest Scorer:', highScorer)
+//        let currentScore = 0
+//          let topPlayer = 'Unknown'
+//
+//          if (state.players && state.players.length > 0) {
+//            // Get highest scoring player in current game
+//            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
+//            currentScore = best.score
+//            topPlayer = best.name
+//          }
+//
+//          // Read saved high score from localStorage
+//          const savedHighScore = localStorage.getItem('highestScore')
+//          const savedScorer = localStorage.getItem('highestScorer')
+//          highScore = savedHighScore ? parseInt(savedHighScore) : 0
+//          highScorer = savedScorer || 'Unknown'
+//
+//          // Update if new high score
+//          if (currentScore > highScore) {
+//            highScore = currentScore
+//            highScorer = topPlayer
+//            localStorage.setItem('highestScore', highScore)
+//            localStorage.setItem('highestScorer', highScorer)
+//          }
+//
+//          // Log highest score
+//          console.log('Highest Score:', highScore)
+//          console.log('Highest Scorer:', highScorer)
         this.reset_and_run()
       }
     }
@@ -257,37 +267,6 @@ class Controller {
   disable () {
     document.querySelector('#run').setAttribute('disabled', 'disabled')
     document.querySelector('#stop').setAttribute('disabled', 'disabled')
-      if (this.autoplay) {
-          let currentScore = 0
-          let topPlayer = 'Unknown'
-
-          if (state.players && state.players.length > 0) {
-            // Get highest scoring player in current game
-            const best = state.players.reduce((a, b) => (a.score > b.score ? a : b))
-            currentScore = best.score
-            topPlayer = best.name
-          }
-
-          // Read saved high score from localStorage
-          const savedHighScore = localStorage.getItem('highestScore')
-          const savedScorer = localStorage.getItem('highestScorer')
-          let highScore = savedHighScore ? parseInt(savedHighScore) : 0
-          let highScorer = savedScorer || 'Unknown'
-
-          // Update if new high score
-          if (currentScore > highScore) {
-            highScore = currentScore
-            highScorer = topPlayer
-            localStorage.setItem('highestScore', highScore)
-            localStorage.setItem('highestScorer', highScorer)
-          }
-
-          // Log highest score
-          console.log('Highest Score:', highScore)
-          console.log('Highest Scorer:', highScorer)
-
-          this.reset_and_run()
-        }
       }
   }
 
@@ -538,6 +517,7 @@ class Information {
       infoText += 'No players connected.<br/>'
     }
 
+    let player_num = 0;
     state.players.forEach(player => {
       const formattedResponseTime = (player.response_time * 1000.0).toFixed(2)
 
@@ -559,9 +539,12 @@ class Information {
       infoText += `Missed: ${player.misses}<br/>`
       infoText += `Crashes: ${player.hits}<br/>`
       infoText += `Collisions: ${player.collisions}<br/>`
-      infoText += `Victories: <br/>`
+      infoText += '<br/>'
+      infoText += `High Score: ${high_scores[player_num]}<br/>`
+      infoText += `Average Score: ${(results_sums[player_num] / num_of_rounds).toFixed(3)}<br/>`
 
       infoText += '<br/><br/>'
+      player_num++;
     })
 
     this.infoElement.innerHTML = infoText
